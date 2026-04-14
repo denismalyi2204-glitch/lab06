@@ -10,11 +10,11 @@
 
 ## Сборка
 (инструкции по сборке будут добавлены позже)
-[![CI Status](https://github.com/denismalyi2204/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204/lab04/actions/workflows/ci.yml)
+[![CI Status](https://github.com/denismalyi2204/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204/lab05/actions/workflows/ci.yml)
 
 ## CI Status
 
-[![CI](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml)
+[![CI](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml)
 
 ### Build Matrix
 - **gcc** - Ubuntu latest
@@ -22,7 +22,7 @@
 
 ## CI Status
 
-[![CI](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml)
+[![CI](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml)
 
 ### Build Matrix
 - **gcc** - Ubuntu latest
@@ -40,4 +40,12 @@ cmake --build .
 
 ## CI Status
 
-[![CI](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml)
+[![CI](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml)
+
+## CI Status
+
+[![CI](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml)
+
+## CI Status
+
+[![CI](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab05/actions/workflows/ci.yml)

@@ -1,71 +1,24 @@
 name: CI
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        compiler: [gcc, clang]
-    
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake build-essential
-        if [ "${{ matrix.compiler }}" = "clang" ]; then
-          sudo apt-get install -y clang
-        fi
+    - name: Configure CMake
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
     
-    - name: Set compiler
-      run: |
-        if [ "${{ matrix.compiler }}" = "gcc" ]; then
-          echo "CXX=g++" >> $GITHUB_ENV
-        else
-          echo "CXX=clang++" >> $GITHUB_ENV
-        fi
+    - name: Build
+      run: cmake --build _build
     
-    - name: Build formatter_lib
-      run: |
-        cd formatter_lib
-        mkdir -p build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-        cmake --build .
+    - name: Run tests
+      run: cmake --build _build --target test
     
-    - name: Build formatter_ex_lib
-      run: |
-        cd formatter_ex_lib
-        mkdir -p build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-        cmake --build .
-    
-    - name: Build and run hello_world
-      run: |
-        cd hello_world_application
-        mkdir -p build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-        cmake --build .
-        ./hello_world
-    
-    - name: Build solver_lib
-      run: |
-        cd solver_lib
-        mkdir -p build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-        cmake --build .
-    
-    - name: Build and test solver
-      run: |
-        cd solver_application
-        mkdir -p build && cd build
-        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-        cmake --build .
-        echo "1 -3 2" | ./solver
+    - name: Run tests verbose
+      run: cmake --build _build --target test -- ARGS=--verbose

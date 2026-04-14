@@ -1,28 +1,41 @@
-cmake_minimum_required(VERSION 3.4)
-project(print)
+cmake_minimum_required(VERSION 3.5)
+project(lab05)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Добавляем include директорию
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 
-target_include_directories(print PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-# Примеры всегда собираются
 add_executable(example1 examples/example1.cpp)
-add_executable(example2 examples/example2.cpp)
 target_link_libraries(example1 print)
+
+add_executable(example2 examples/example2.cpp)
 target_link_libraries(example2 print)
 
-install(TARGETS print example1 example2
-    EXPORT print-config
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-)
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
-install(DIRECTORY include/ DESTINATION include)
-install(EXPORT print-config DESTINATION cmake)
+if(BUILD_EXAMPLES)
+  add_subdirectory(formatter_lib)
+  add_subdirectory(formatter_ex_lib)
+  add_subdirectory(solver_lib)
+
+  add_executable(hello_world_application hello_world_application/hello_world.cpp)
+  target_link_libraries(hello_world_application print formatter_ex)
+
+  add_executable(solver_application solver_application/equation.cpp)
+  target_link_libraries(solver_application print solver_lib)
+endif()
+
+if(BUILD_TESTS)
+  enable_testing()
+  find_package(GTest REQUIRED)
+  file(GLOB ${PROJECT_NAME}_TEST_SOURCES tests/*.cpp)
+  add_executable(check ${${PROJECT_NAME}_TEST_SOURCES})
+  # Линкуем с print, а не с ${PROJECT_NAME}
+  target_link_libraries(check print GTest::GTest GTest::Main)
+  target_include_directories(check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  add_test(NAME check COMMAND check)
+endif()
