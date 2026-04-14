@@ -37,3 +37,7 @@ cmake --build .
 ./example1
 ./example2
 ```
+
+## CI Status
+
+[![CI](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml/badge.svg)](https://github.com/denismalyi2204-glitch/lab04/actions/workflows/ci.yml)

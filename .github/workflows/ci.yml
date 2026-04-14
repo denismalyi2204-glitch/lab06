@@ -33,21 +33,39 @@ jobs:
           echo "CXX=clang++" >> $GITHUB_ENV
         fi
     
-    - name: Configure with CMake
+    - name: Build formatter_lib
       run: |
-        mkdir -p build
-        cd build
+        cd formatter_lib
+        mkdir -p build && cd build
         cmake .. -DCMAKE_CXX_COMPILER=${CXX}
-    
-    - name: Build project
-      run: |
-        cd build
         cmake --build .
     
-    - name: Run examples
+    - name: Build formatter_ex_lib
       run: |
-        echo "=== Running example1 ==="
-        ./build/example1
-        echo ""
-        echo "=== Running example2 ==="
-        ./build/example2
+        cd formatter_ex_lib
+        mkdir -p build && cd build
+        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
+        cmake --build .
+    
+    - name: Build and run hello_world
+      run: |
+        cd hello_world_application
+        mkdir -p build && cd build
+        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
+        cmake --build .
+        ./hello_world
+    
+    - name: Build solver_lib
+      run: |
+        cd solver_lib
+        mkdir -p build && cd build
+        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
+        cmake --build .
+    
+    - name: Build and test solver
+      run: |
+        cd solver_application
+        mkdir -p build && cd build
+        cmake .. -DCMAKE_CXX_COMPILER=${CXX}
+        cmake --build .
+        echo "1 -3 2" | ./solver
