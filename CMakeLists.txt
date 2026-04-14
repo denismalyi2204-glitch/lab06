@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 project(lab05)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# Добавляем include директорию
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
@@ -31,11 +30,17 @@ endif()
 
 if(BUILD_TESTS)
   enable_testing()
-  find_package(GTest REQUIRED)
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.14.0
+  )
+  FetchContent_MakeAvailable(googletest)
+  
   file(GLOB ${PROJECT_NAME}_TEST_SOURCES tests/*.cpp)
   add_executable(check ${${PROJECT_NAME}_TEST_SOURCES})
-  # Линкуем с print, а не с ${PROJECT_NAME}
-  target_link_libraries(check print GTest::GTest GTest::Main)
+  target_link_libraries(check print gtest_main)
   target_include_directories(check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   add_test(NAME check COMMAND check)
 endif()
