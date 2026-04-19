@@ -44,3 +44,5 @@ if(BUILD_TESTS)
   target_include_directories(check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   add_test(NAME check COMMAND check)
 endif()
+
+include(CPackConfig.cmake)

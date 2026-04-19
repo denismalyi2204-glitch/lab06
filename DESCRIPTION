@@ -1,0 +1,3 @@
+The print library provides simple printing functionality for C++ applications.
+It includes functions for console output, file logging, and formatted printing.
+This package contains static library and header files for development.
