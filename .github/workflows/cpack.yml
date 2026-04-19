@@ -1,0 +1,59 @@
+name: CPack Package Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential
+    
+    - name: Configure CMake
+      run: cmake -H. -B_build -DCMAKE_BUILD_TYPE=Release
+    
+    - name: Build project
+      run: cmake --build _build
+    
+    - name: Create TGZ package
+      run: |
+        cd _build
+        cpack -G "TGZ"
+        cd ..
+    
+    - name: Create DEB package (optional)
+      run: |
+        cd _build
+        cpack -G "DEB" || echo "DEB generation skipped"
+        cd ..
+    
+    - name: Create RPM package (optional)
+      run: |
+        cd _build
+        cpack -G "RPM" || echo "RPM generation skipped (rpmbuild not installed)"
+        cd ..
+    
+    - name: List generated packages
+      run: ls -la _build/*.tar.gz _build/*.deb _build/*.rpm 2>/dev/null || true
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: packages
+        path: |
+          _build/*.tar.gz
+          _build/*.deb
+          _build/*.rpm
+        if-no-files-found: warn
