@@ -1,3 +1,3 @@
 * Sun Jun 07 2026 denismalyi2204-glitch <denismalyi2204@gmail.com> 1.0.0.0
-- Initial release with solver application
-- Added DEB, RPM, DMG, MSI package support
+- Initial release with quadratic equation solver
+- Supports solving ax^2 + bx + c = 0

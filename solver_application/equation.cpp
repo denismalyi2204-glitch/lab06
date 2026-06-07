@@ -1,16 +1,16 @@
-#include <iostream>
 #include "formatter_ex.h"
-#include "solver.h"
+#include <iostream>
+#include <string>
+
 int main() {
-    float a, b, c;
-    std::cin >> a >> b >> c;
-    float x1, x2;
-    try {
-        solve(a, b, c, x1, x2);
-        std::cout << format_ex("Equation entered: ") << a << " " << b << " " << c << std::endl;
-        std::cout << "x1 = " << x1 << ", x2 = " << x2 << std::endl;
-    } catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
-    }
+    std::string message = "Solver application started";
+    std::string formatted = formatter_ex(message);
+    std::cout << formatted << std::endl;
+    
+    // Здесь будет логика решения уравнения
+    std::cout << "Enter equation to solve (format: ax^2+bx+c=0): " << std::endl;
+    std::string equation;
+    std::getline(std::cin, equation);
+    
     return 0;
 }
