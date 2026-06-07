@@ -17,3 +17,11 @@ artifacts/
 *.msi
 *.tar.gz
 *.zip
+_build/
+artifacts/
+*.deb
+*.rpm
+*.dmg
+*.msi
+*.tar.gz
+*.zip
