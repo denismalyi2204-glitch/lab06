@@ -21,9 +21,9 @@ jobs:
             deps: "cmake"
             package_ext: "*.dmg *.tar.gz"
           - os: windows-latest
-            cpack_generators: "WIX;ZIP"
+            cpack_generators: "ZIP"  # Убрал WIX, так как нужна дополнительная настройка
             deps: "cmake"
-            package_ext: "*.msi *.zip"
+            package_ext: "*.zip"
     
     permissions:
       contents: write
@@ -47,8 +47,7 @@ jobs:
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-        choco install wixtoolset
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --limit-output
     
     - name: Configure CMake
       run: cmake -H. -B_build -DCMAKE_BUILD_TYPE=Release
@@ -68,14 +67,12 @@ jobs:
         ls -la _build/${{ matrix.package_ext }} 2>/dev/null || echo "No packages found"
     
     - name: Upload to GitHub Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           _build/*.deb
           _build/*.rpm
           _build/*.dmg
-          _build/*.msi
-          _build/*.tar.gz
           _build/*.zip
         fail_on_unmatched_files: false
       env:

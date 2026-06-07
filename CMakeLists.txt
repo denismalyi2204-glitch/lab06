@@ -46,3 +46,47 @@ if(BUILD_TESTS)
 endif()
 
 include(CPackConfig.cmake)
+
+# Alias for solver (for packaging)
+add_executable(solver solver_application/equation.cpp)
+target_link_libraries(solver print formatter_ex formatter)
+
+# Add include directories for solver
+target_include_directories(solver PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib/formatter_lib
+)
+
+# Ensure solver links with all required libraries
+if(TARGET solver)
+    target_link_libraries(solver print formatter_ex formatter)
+endif()
+
+# Formatter_ex library
+add_library(formatter_ex STATIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib/formatter_ex.cpp
+)
+target_link_libraries(formatter_ex formatter)
+target_include_directories(formatter_ex PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib/formatter_lib
+)
+
+# Formatter library
+add_library(formatter STATIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib/formatter_lib/formatter.cpp
+)
+target_include_directories(formatter PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib/formatter_lib
+)
+
+# Installation rules
+install(TARGETS solver
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+    DESTINATION share/doc/solver
+)

@@ -33,3 +33,8 @@ set(CPACK_DMG_VOLUME_NAME "Solver Installer")
 set(CPACK_DMG_FORMAT "UDRO")
 
 include(CPack)
+
+# Components for packaging
+set(CPACK_COMPONENTS_ALL solver)
+set(CPACK_COMPONENT_SOLVER_DISPLAY_NAME "Solver Application")
+set(CPACK_COMPONENT_SOLVER_DESCRIPTION "Linear equation solver")
