@@ -40,3 +40,13 @@ set(CPACK_DMG_FORMAT "UDRO")
 set(CPACK_COMPONENTS_ALL solver)
 
 include(CPack)
+
+# Windows WIX specific settings (required)
+set(CPACK_WIX_UPGRADE_GUID "12345678-1234-1234-1234-123456789012")
+set(CPACK_WIX_PRODUCT_GUID "87654321-4321-4321-4321-210987654321")
+set(CPACK_WIX_PACKAGE_NAME "Solver")
+set(CPACK_WIX_INSTALL_SCOPE "perMachine")
+
+# Create a minimal license file for WIX
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/license.rtf "This software is licensed under MIT License")
+set(CPACK_WIX_LICENSE_RTF ${CMAKE_CURRENT_BINARY_DIR}/license.rtf)
