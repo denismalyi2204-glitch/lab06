@@ -9,3 +9,11 @@ _install/
 .vscode/
 .idea/
 log.txt
+_build/
+artifacts/
+*.deb
+*.rpm
+*.dmg
+*.msi
+*.tar.gz
+*.zip

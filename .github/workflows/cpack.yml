@@ -1,4 +1,4 @@
-name: CPack Package Build
+name: Build and Release Packages
 
 on:
   push:
@@ -7,8 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-packages:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            cpack_generators: "DEB;RPM;TGZ"
+            deps: "cmake build-essential rpm"
+            package_ext: "*.deb *.rpm *.tar.gz"
+          - os: macos-latest
+            cpack_generators: "DragNDrop;TGZ"
+            deps: "cmake"
+            package_ext: "*.dmg *.tar.gz"
+          - os: windows-latest
+            cpack_generators: "WIX;ZIP"
+            deps: "cmake"
+            package_ext: "*.msi *.zip"
+    
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout code
@@ -16,44 +34,49 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Install dependencies
+    - name: Install dependencies (Linux)
+      if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential
+        sudo apt-get install -y ${{ matrix.deps }}
+    
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ${{ matrix.deps }}
+    
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+        choco install wixtoolset
     
     - name: Configure CMake
       run: cmake -H. -B_build -DCMAKE_BUILD_TYPE=Release
     
     - name: Build project
-      run: cmake --build _build
+      run: cmake --build _build --config Release
     
-    - name: Create TGZ package
+    - name: Create packages
       run: |
         cd _build
-        cpack -G "TGZ"
-        cd ..
-    
-    - name: Create DEB package (optional)
-      run: |
-        cd _build
-        cpack -G "DEB" || echo "DEB generation skipped"
-        cd ..
-    
-    - name: Create RPM package (optional)
-      run: |
-        cd _build
-        cpack -G "RPM" || echo "RPM generation skipped (rpmbuild not installed)"
+        cpack -G "${{ matrix.cpack_generators }}" -C Release
         cd ..
     
     - name: List generated packages
-      run: ls -la _build/*.tar.gz _build/*.deb _build/*.rpm 2>/dev/null || true
+      run: |
+        echo "Packages generated:"
+        ls -la _build/${{ matrix.package_ext }} 2>/dev/null || echo "No packages found"
     
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+    - name: Upload to GitHub Release
+      uses: softprops/action-gh-release@v1
       with:
-        name: packages
-        path: |
-          _build/*.tar.gz
+        files: |
           _build/*.deb
           _build/*.rpm
-        if-no-files-found: warn
+          _build/*.dmg
+          _build/*.msi
+          _build/*.tar.gz
+          _build/*.zip
+        fail_on_unmatched_files: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
