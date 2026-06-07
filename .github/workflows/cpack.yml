@@ -15,15 +15,9 @@ jobs:
           - os: ubuntu-latest
             cpack_generators: "DEB;RPM;TGZ"
             deps: "cmake build-essential rpm"
-            package_ext: "*.deb *.rpm *.tar.gz"
           - os: macos-latest
-            cpack_generators: "DragNDrop;TGZ"
+            cpack_generators: "TGZ"
             deps: "cmake"
-            package_ext: "*.dmg *.tar.gz"
-          - os: windows-latest
-            cpack_generators: "ZIP"  # Убрал WIX, так как нужна дополнительная настройка
-            deps: "cmake"
-            package_ext: "*.zip"
     
     permissions:
       contents: write
@@ -44,11 +38,6 @@ jobs:
       if: runner.os == 'macOS'
       run: brew install ${{ matrix.deps }}
     
-    - name: Install dependencies (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --limit-output
-    
     - name: Configure CMake
       run: cmake -H. -B_build -DCMAKE_BUILD_TYPE=Release
     
@@ -61,19 +50,14 @@ jobs:
         cpack -G "${{ matrix.cpack_generators }}" -C Release
         cd ..
     
-    - name: List generated packages
-      run: |
-        echo "Packages generated:"
-        ls -la _build/${{ matrix.package_ext }} 2>/dev/null || echo "No packages found"
-    
     - name: Upload to GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
           _build/*.deb
           _build/*.rpm
+          _build/*.tar.gz
           _build/*.dmg
-          _build/*.zip
         fail_on_unmatched_files: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
