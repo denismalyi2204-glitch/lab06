@@ -14,14 +14,17 @@ jobs:
         include:
           - os: ubuntu-latest
             cpack_generators: "DEB;RPM;TGZ"
+            cpack_source_generators: "TGZ;ZIP"
             deps: "cmake build-essential rpm"
           
           - os: macos-latest
             cpack_generators: "DragNDrop;TGZ"
+            cpack_source_generators: "TGZ;ZIP"
             deps: "cmake"
           
           - os: windows-latest
-            cpack_generators: "ZIP"
+            cpack_generators: "WIX;ZIP"
+            cpack_source_generators: "ZIP"
             deps: "cmake"
     
     permissions:
@@ -43,7 +46,9 @@ jobs:
     
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows'
-      run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+        choco install wixtoolset -y
     
     - name: Configure CMake
       run: cmake -B _build -S . -DCMAKE_BUILD_TYPE=Release
@@ -51,10 +56,16 @@ jobs:
     - name: Build project
       run: cmake --build _build --config Release
     
-    - name: Create packages
+    - name: Create binary packages
       run: |
         cd _build
         cpack -G "${{ matrix.cpack_generators }}" -C Release
+        cd ..
+    
+    - name: Create source packages
+      run: |
+        cd _build
+        cpack -G "${{ matrix.cpack_source_generators }}" --config CPackSourceConfig.cmake
         cd ..
     
     - name: Upload to GitHub Release
@@ -64,8 +75,9 @@ jobs:
           _build/*.deb
           _build/*.rpm
           _build/*.dmg
-          _build/*.zip
+          _build/*.msi
           _build/*.tar.gz
+          _build/*.zip
         fail_on_unmatched_files: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
